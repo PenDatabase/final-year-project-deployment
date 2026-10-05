@@ -15,7 +15,7 @@ import argparse
 import random
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
@@ -74,10 +74,15 @@ def load_resources(path: str | Path) -> list[ResourceType]:
     return resources
 
 
-def build_model(values: np.ndarray, epochs: int = 5):
+def build_model(
+    values: np.ndarray,
+    epochs: int = 5,
+    progress_callback: Callable[[str, str], None] | None = None,
+):
     from sklearn.preprocessing import StandardScaler
 
     try:
+        from tensorflow.keras.callbacks import Callback
         from tensorflow.keras.layers import LSTM, Dense
         from tensorflow.keras.models import Sequential
     except ImportError as exc:
@@ -95,7 +100,12 @@ def build_model(values: np.ndarray, epochs: int = 5):
 
     model = Sequential([LSTM(256, input_shape=(1, LOOKBACK_HOURS)), Dense(1)])
     model.compile(loss="mean_squared_error", optimizer="adam", metrics=["mse"])
-    model.fit(x, y, epochs=epochs, batch_size=1, verbose=0)
+    class TrainingProgress(Callback):
+        def on_epoch_end(self, epoch, logs=None):
+            if progress_callback:
+                progress_callback("training", f"Training epoch {epoch + 1} of {epochs}")
+
+    model.fit(x, y, epochs=epochs, batch_size=1, verbose=0, callbacks=[TrainingProgress()])
     return model, scaler, scaled
 
 
@@ -255,14 +265,26 @@ def configuration_report(configuration: Configuration, resources: list[ResourceT
 
 
 def run_pipeline_report(
-    request_path: str, resource_path: str, load_balancer_cost: float, epochs: int
+    request_path: str,
+    resource_path: str,
+    load_balancer_cost: float,
+    epochs: int,
+    progress_callback: Callable[[str, str], None] | None = None,
 ) -> dict[str, Any]:
+    if progress_callback:
+        progress_callback("validating", "Reading request history and instance catalogue")
     values = load_requests(request_path)
     resources = load_resources(resource_path)
-    model, scaler, scaled = build_model(values, epochs=epochs)
+    if progress_callback:
+        progress_callback("training", "Preparing the forecast model")
+    model, scaler, scaled = build_model(values, epochs=epochs, progress_callback=progress_callback)
+    if progress_callback:
+        progress_callback("forecasting", "Projecting the next 168 hours")
     forecast = forecast_week(model, scaler, scaled)
     peak_hourly = float(forecast.max())
     required_rps = peak_hourly / 3600.0
+    if progress_callback:
+        progress_callback("optimizing", "Comparing resource configurations")
     baseline = greedy_baseline(required_rps, resources, load_balancer_cost)
     result = memetic_optimize(required_rps, resources, load_balancer_cost)
     return {

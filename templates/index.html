@@ -1,44 +1,63 @@
 {% extends "base.html" %}
-{% block title %}Run an analysis · Capacity / Forecast{% endblock %}
+{% block title %}Start optimizing · Capacity / Forecast{% endblock %}
 {% block content %}
-<section class="hero page-shell">
-  <p class="eyebrow">01 / Resource intelligence</p>
-  <h1>Make capacity<br><em>feel obvious.</em></h1>
-  <div class="hero-bottom">
-    <p class="lede">Upload your request history and instance catalogue. We will forecast the next week, then find the least-cost configuration for the peak.</p>
-    <span class="mark" aria-hidden="true">✳</span>
-  </div>
+<section class="upload-hero page-shell">
+  <p class="eyebrow">02 / Start optimizing</p>
+  <h1>Bring the<br><em>signal.</em></h1>
+  <p class="lede">Drop in two small CSVs and we will turn your demand history into a capacity recommendation.</p>
 </section>
 
-<section class="work-area page-shell" id="how-it-works">
-  <div class="section-label"><span>02</span><span>Run the pipeline</span></div>
-  <form class="analysis-form" action="/run" method="post" enctype="multipart/form-data">
-    <label class="file-field">
-      <span class="field-number">01</span>
-      <span class="field-copy"><strong>Request history</strong><small>CSV with a Requests column · 336+ hourly rows</small></span>
-      <input type="file" name="requests_file" accept=".csv,text/csv" required>
-      <span class="file-button">Choose file <b>↗</b></span>
-    </label>
-    <label class="file-field">
-      <span class="field-number">02</span>
-      <span class="field-copy"><strong>Instance catalogue</strong><small>CSV with name, capacity_rps, cost_per_hour</small></span>
-      <input type="file" name="resources_file" accept=".csv,text/csv" required>
-      <span class="file-button">Choose file <b>↗</b></span>
-    </label>
+<section class="upload-workspace page-shell">
+  <div class="section-label"><span>03</span><span>Supply the inputs</span></div>
+  <form class="analysis-form" id="analysis-form" action="/run" method="post" enctype="multipart/form-data">
+    <div class="drop-grid">
+      <label class="drop-zone" for="requests-file" data-drop-zone>
+        <input id="requests-file" type="file" name="requests_file" accept=".csv,text/csv" required>
+        <span class="drop-icon" aria-hidden="true">↥</span>
+        <span class="drop-number">01</span>
+        <strong>Request history</strong>
+        <small>CSV · Requests column · 336+ hourly rows</small>
+        <span class="drop-action">Drop file here or <u>browse</u></span>
+        <span class="selected-file" data-file-name>Waiting for a file</span>
+      </label>
+      <label class="drop-zone" for="resources-file" data-drop-zone>
+        <input id="resources-file" type="file" name="resources_file" accept=".csv,text/csv" required>
+        <span class="drop-icon" aria-hidden="true">↥</span>
+        <span class="drop-number">02</span>
+        <strong>Instance catalogue</strong>
+        <small>CSV · name, capacity_rps, cost_per_hour</small>
+        <span class="drop-action">Drop file here or <u>browse</u></span>
+        <span class="selected-file" data-file-name>Waiting for a file</span>
+      </label>
+    </div>
     <div class="controls">
       <label><span>Load balancer / hour</span><input type="number" name="load_balancer_cost" value="0.025" min="0" step="0.001" required></label>
       <label><span>Training epochs</span><input type="number" name="epochs" value="5" min="1" max="100" required></label>
-      <button type="submit">Run analysis <span>↗</span></button>
+      <button type="submit" id="run-button">Run analysis <span>↗</span></button>
     </div>
   </form>
 </section>
 
+<section class="processing page-shell" id="processing-panel" aria-live="polite" hidden>
+  <div class="section-label"><span>04</span><span>Live pipeline</span></div>
+  <div class="processing-head"><h2>Making the<br><em>call.</em></h2><span class="pulse"></span></div>
+  <ol class="progress-list" id="progress-list">
+    <li data-stage="queued"><span>01</span><strong>Queued</strong><small>Preparing your analysis</small></li>
+    <li data-stage="validating"><span>02</span><strong>Validate</strong><small>Waiting to begin</small></li>
+    <li data-stage="training"><span>03</span><strong>Train</strong><small>Waiting to begin</small></li>
+    <li data-stage="forecasting"><span>04</span><strong>Forecast</strong><small>Waiting to begin</small></li>
+    <li data-stage="optimizing"><span>05</span><strong>Optimize</strong><small>Waiting to begin</small></li>
+  </ol>
+</section>
+
+<div id="report-region"></div>
 <section class="notes page-shell">
-  <div class="section-label"><span>03</span><span>What you get</span></div>
+  <div class="section-label"><span>05</span><span>The output</span></div>
   <div class="note-grid">
     <article><span>01</span><h2>Forecast</h2><p>A one-week recursive LSTM forecast from your hourly request history.</p></article>
     <article><span>02</span><h2>Baseline</h2><p>A greedy, cost-per-capacity comparison point for the same peak demand.</p></article>
     <article><span>03</span><h2>Recommendation</h2><p>A memetic search result with capacity, instance mix, and hourly cost.</p></article>
   </div>
 </section>
+<script src="{{ url_for('static', path='app.js') }}"></script>
 {% endblock %}
