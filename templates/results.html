@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Report · Capacity / Forecast{% endblock %}
+{% block content %}
+<section class="report-intro page-shell">
+  <p class="eyebrow">04 / Analysis complete</p>
+  <h1>The next move<br><em>is lighter.</em></h1>
+  <p class="lede">A forecast-led capacity plan, tuned against your instance catalogue.</p>
+</section>
+<section class="report page-shell">
+  <div class="section-label"><span>05</span><span>Signal</span></div>
+  <div class="metrics">
+    <article class="metric metric-feature"><small>Forecast peak</small><strong>{{ '%.2f'|format(report.forecast_peak) }}</strong><span>requests / hour</span></article>
+    <article class="metric"><small>Required capacity</small><strong>{{ '%.4f'|format(report.required_rps) }}</strong><span>requests / second</span></article>
+    <article class="metric"><small>History used</small><strong>{{ report.observations }}</strong><span>hourly observations</span></article>
+  </div>
+</section>
+<section class="comparison page-shell">
+  <div class="section-label"><span>06</span><span>Two paths</span></div>
+  <div class="result-grid">
+    <article class="result-card baseline"><p class="card-kicker">The baseline</p><h2>Greedy</h2><p class="result-description">{{ report.baseline.description }}</p><dl><div><dt>Hourly cost</dt><dd>${{ '%.4f'|format(report.baseline.hourly_cost) }}</dd></div><div><dt>Capacity</dt><dd>{{ '%.2f'|format(report.baseline.capacity_rps) }} RPS</dd></div></dl></article>
+    <article class="result-card recommended"><p class="card-kicker">Recommended</p><h2>Memetic</h2><p class="result-description">{{ report.result.description }}</p><dl><div><dt>Hourly cost</dt><dd>${{ '%.4f'|format(report.result.hourly_cost) }}</dd></div><div><dt>Capacity</dt><dd>{{ '%.2f'|format(report.result.capacity_rps) }} RPS</dd></div></dl><span class="stamp">Selected<br>configuration</span></article>
+  </div>
+  <a class="back-link" href="/">← Start another analysis</a>
+</section>
+{% endblock %}

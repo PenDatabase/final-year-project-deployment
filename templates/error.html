@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Could not run · Capacity / Forecast{% endblock %}
+{% block content %}
+<section class="error-page page-shell">
+  <p class="eyebrow">04 / Needs attention</p>
+  <h1>That run<br><em>stumbled.</em></h1>
+  <p class="error-message">{{ error }}</p>
+  <a class="primary-link" href="/">Back to uploads <span>↗</span></a>
+</section>
+{% endblock %}
