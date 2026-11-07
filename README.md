@@ -48,7 +48,14 @@ small,25,0.01
 large,100,0.04
 ```
 
-The report includes the one-week forecast peak, required capacity, greedy baseline, and memetic optimization result.
+The report includes the one-week forecast peak, required capacity, and a comparison of every optimization method:
+
+- **Greedy**: cost-per-capacity heuristic baseline
+- **Genetic**: evolutionary baseline without local search
+- **Exact**: dynamic-programming least-cost reference
+- **Memetic**: evolutionary search with repair and local search
+
+Each method displays its selected configuration, hourly cost, optimality gap against the exact result, and runtime. Pipeline timing for training, forecasting, and optimization is also shown.
 
 ## CLI usage
 

@@ -69,6 +69,15 @@ button span { font-size: 1rem; }
 dl { display: flex; gap: 50px; margin-top: 38px; }
 dt { color: var(--muted); margin-bottom: 10px; } dd { margin: 0; font-size: 1.2rem; }
 .stamp { position: absolute; right: 28px; bottom: 28px; border: 1px solid var(--ink); border-radius: 50%; width: 82px; height: 82px; display: grid; place-content: center; text-align: center; font: .57rem var(--mono); transform: rotate(-12deg); }
+.methods-label { border-top: 1px solid var(--line); padding-top: 26px; margin-top: 80px; }
+.method-table { margin-top: 28px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: .68rem; }
+.method-row { display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr 2.8fr; gap: 18px; align-items: start; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.method-header { color: var(--muted); text-transform: uppercase; }
+.method-row strong { font-family: var(--display); font-size: .95rem; font-weight: 500; }
+.method-row strong small { display: block; margin-top: 5px; color: var(--gold); text-transform: uppercase; }
+.method-recommended { background: var(--lime); padding-inline: 14px; margin-inline: -14px; }
+.method-configuration { color: var(--muted); line-height: 1.6; }
+.timing-summary { display: flex; justify-content: space-between; gap: 24px; margin-top: 20px; color: var(--muted); font: .68rem var(--mono); text-transform: uppercase; }
 .back-link, .primary-link { margin-top: 38px; display: inline-flex; }
 .error-page { padding: 130px 0 180px; }
 .error-message { margin-top: 50px; font-family: var(--mono); font-size: .8rem; }
@@ -154,6 +163,10 @@ dt { color: var(--muted); margin-bottom: 10px; } dd { margin: 0; font-size: 1.2r
   .file-field { grid-template-columns: 30px 1fr; gap: 14px; }
   .file-button { grid-column: 2; justify-self: start; }
   .controls, .metrics, .result-grid, .note-grid { grid-template-columns: 1fr; }
+  .method-header { display: none; }
+  .method-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .method-row strong, .method-configuration { grid-column: 1 / -1; }
+  .timing-summary { display: grid; }
   .controls { gap: 28px; }
   .metric, .metric + .metric { border-right: 0; border-bottom: 1px solid var(--line); padding: 24px 0; }
   .metric strong { font-size: 3.5rem; }

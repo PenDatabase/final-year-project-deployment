@@ -12,5 +12,24 @@
     <article class="result-card baseline"><p class="card-kicker">The baseline</p><h2>Greedy</h2><p class="result-description">{{ report.baseline.description }}</p><dl><div><dt>Hourly cost</dt><dd>${{ '%.4f'|format(report.baseline.hourly_cost) }}</dd></div><div><dt>Capacity</dt><dd>{{ '%.2f'|format(report.baseline.capacity_rps) }} RPS</dd></div></dl></article>
     <article class="result-card recommended"><p class="card-kicker">Recommended</p><h2>Memetic</h2><p class="result-description">{{ report.result.description }}</p><dl><div><dt>Hourly cost</dt><dd>${{ '%.4f'|format(report.result.hourly_cost) }}</dd></div><div><dt>Capacity</dt><dd>{{ '%.2f'|format(report.result.capacity_rps) }} RPS</dd></div></dl><span class="stamp">Selected<br>configuration</span></article>
   </div>
+  <div class="section-label methods-label"><span>07</span><span>Method comparison</span></div>
+  <div class="method-table" role="table" aria-label="Resource optimization method comparison">
+    <div class="method-row method-header" role="row">
+      <span>Method</span><span>Hourly cost</span><span>Optimality gap</span><span>Runtime</span><span>Configuration</span>
+    </div>
+    {% for name, method in report.methods.items() %}
+    <div class="method-row{% if name == 'memetic' %} method-recommended{% endif %}" role="row">
+      <strong>{{ name|title }}{% if name == 'exact' %}<small>reference optimum</small>{% elif name == 'memetic' %}<small>proposed</small>{% else %}<small>baseline</small>{% endif %}</strong>
+      <span>${{ '%.4f'|format(method.hourly_cost) }}/hr</span>
+      <span>{% if method.gap_to_optimal_pct is not none %}{{ '%.2f'|format(method.gap_to_optimal_pct) }}%{% else %}—{% endif %}</span>
+      <span>{{ '%.2f'|format(method.runtime_seconds * 1000) }} ms</span>
+      <span class="method-configuration">{{ method.description }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="timing-summary">
+    <span>Pipeline timing</span>
+    <span>Training {{ '%.2f'|format(report.timings.training_seconds) }}s · Forecast {{ '%.2f'|format(report.timings.forecast_seconds) }}s · Optimization {{ '%.2f'|format(report.timings.optimization_seconds) }}s</span>
+  </div>
   <a class="back-link" href="/optimize">← Start another analysis</a>
 </section>
