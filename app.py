@@ -28,6 +28,11 @@ def home(request: Request) -> HTMLResponse:
     return render(request, "landing.html")
 
 
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
 @app.get("/optimize", response_class=HTMLResponse)
 def optimize(request: Request) -> HTMLResponse:
     return render(request, "index.html")

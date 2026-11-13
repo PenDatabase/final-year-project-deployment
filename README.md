@@ -23,6 +23,12 @@ uvicorn app:app --reload
 
 Open <http://127.0.0.1:8000> in a browser.
 
+## Deploy on Render
+
+This repository includes a [`render.yaml`](./render.yaml) Blueprint. In Render, choose **New > Blueprint**, connect this repository, and apply the Blueprint. Render will install the dependencies, start the FastAPI service on its assigned port, and use `/health` for health checks.
+
+The service uses Python 3.11.11 from [`runtime.txt`](./runtime.txt), which is compatible with the TensorFlow dependency. No environment variables or secrets are required for the current application.
+
 ## Input files
 
 The upload form expects two CSV files:
